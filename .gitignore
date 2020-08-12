@@ -128,4 +128,5 @@ dist
 
 # End of https://www.toptal.com/developers/gitignore/api/yarn,node
 
-src/token.json
+/src/token.json
+/build
