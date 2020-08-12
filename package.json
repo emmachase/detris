@@ -1,0 +1,19 @@
+{
+  "name": "detris",
+  "version": "0.0.1",
+  "description": "Tetromino stacker game for Discord",
+  "main": "src/index.ts",
+  "author": "Emma",
+  "license": "MIT",
+  "scripts": {
+    "build": "rm -r build && tsc --build tsconfig.json",
+    "start": "yarn build && node build/index.js"
+  },
+  "dependencies": {
+    "discord.js": "^12.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^14.0.27",
+    "@types/ws": "^7.2.6"
+  }
+}
