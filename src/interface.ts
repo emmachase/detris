@@ -162,7 +162,7 @@ export function initialize() {
     exchange.addCommand("admin_resume", async msg => {
         if (msg.author.id.toString() === "333530784495304705") {
             maintenance = false;
-            msg.reply("Resumed Detris games without a restart, are you sure you didn't mean to restart my process?");
+            msg.reply("Re-allowing new Detris games without a restart, are you sure you didn't mean to restart my process?");
         }
     });
 }
