@@ -35,14 +35,20 @@ interface GameState {
     channel: Discord.Channel,
     host: Discord.Snowflake, // Id of User who started the game
     game: MinoGame,
-    quit(): Promise<void>
+    quit(reason?: string): Promise<void>
 }
 
 export function initialize() {
+    let maintenance: boolean = false;
+
     const loadingGames: Set<Discord.Snowflake> = new Set();
     const runningGames: Record<Discord.Snowflake, GameState> = {};
 
     async function startNewGame(msg: Discord.Message) {
+        if (maintenance) {
+            return msg.reply("Detris is currently down for maintenance. Please try again in a minute.");
+        }
+
         const existingGame = runningGames[msg.channel.id];
         if (existingGame || loadingGames.has(msg.channel.id)) {
             return msg.reply("There is already a game going in this channel! Use " + exchange.prefix + "giveup to stop this one.")
@@ -141,5 +147,22 @@ export function initialize() {
         runningGames[msg.channel.id] = undefined;
         await game.quit();
         await startNewGame(msg);
+    });
+
+    exchange.addCommand("admin_shutdown", async msg => {
+        if (msg.author.id.toString() === "333530784495304705") {
+            maintenance = true;
+
+            Object.values(runningGames).forEach(game => {
+                game.quit("Detris is restarting for maintenance. Please try making a new game in a minute.");
+            });
+        }
+    });
+
+    exchange.addCommand("admin_resume", async msg => {
+        if (msg.author.id.toString() === "333530784495304705") {
+            maintenance = false;
+            msg.reply("Resumed Detris games without a restart, are you sure you didn't mean to restart my process?");
+        }
     });
 }
