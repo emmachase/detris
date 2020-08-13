@@ -21,7 +21,7 @@ discordClient.on("error", e => {
 })
 
 discordClient.on('disconnect', function(msg, code) {
-    console.error(msg);
+    console.error("Disconnected:", msg);
     discordClient.login(token);
 });
 

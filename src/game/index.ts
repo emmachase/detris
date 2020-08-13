@@ -377,7 +377,7 @@ export default class MinoGame {
     tryMove(delta: number) {
         if (!this.fallingMino) return;
 
-        while (!this.board.willPieceBeObstructed(this.fallingMino, Math.sign(delta))) {
+        while (delta !== 0 && !this.board.willPieceBeObstructed(this.fallingMino, Math.sign(delta))) {
             this.fallingMino.x += Math.sign(delta);
             delta += -Math.sign(delta);
 
