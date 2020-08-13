@@ -133,6 +133,8 @@ export default class MinoGame {
             }
 
             this.fallingMino.lockTimer = 0;
+            this.fallingMino.remainingRotations = this.options.rotateLock;
+            this.fallingMino.remainingTranslations = this.options.translateLock;
         }
     }
 
@@ -375,8 +377,9 @@ export default class MinoGame {
     tryMove(delta: number) {
         if (!this.fallingMino) return;
 
-        if (!this.board.willPieceBeObstructed(this.fallingMino, delta)) {
-            this.fallingMino.x += delta;
+        while (!this.board.willPieceBeObstructed(this.fallingMino, Math.sign(delta))) {
+            this.fallingMino.x += Math.sign(delta);
+            delta += -Math.sign(delta);
 
             this.lockWasSpin = false;
             if (this.fallingMino.lockTimer > 0) {

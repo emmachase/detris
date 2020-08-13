@@ -13,8 +13,10 @@ export const Squares = {
 };
 
 export const Controls = {
+    dasleft: "⏪",
     left: "⬅️",
     right: "➡️",
+    dasright: "⏩",
     soft: "⬇️",
     hard: "⏬",
     ccw: "↪️",

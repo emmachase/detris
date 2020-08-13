@@ -11,7 +11,7 @@ export class GameOptions {
 
     lockTimer: number = 80
 
-    gravity: number = 2*0.016
+    gravity: number = 0.016
 
     backfire: number = 1
     garbageCap: number = 6

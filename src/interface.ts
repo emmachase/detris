@@ -58,10 +58,12 @@ export function initialize() {
         const gMsg = await channel.send(constructEmbed(game));
 
         const emojiCommands = await new EmojiCommandBuilder(exchange)
-            .addCommand(Controls.left,  () => game.tryMove(-1))
-            .addCommand(Controls.right, () => game.tryMove( 1))
-            .addCommand(Controls.soft,  () => game.dropPiece(false))
-            .addCommand(Controls.hard,  () => game.dropPiece(true))
+            .addCommand(Controls.dasleft,  () => game.tryMove(-Infinity))
+            .addCommand(Controls.left,     () => game.tryMove(-1))
+            .addCommand(Controls.right,    () => game.tryMove( 1))
+            .addCommand(Controls.dasright, () => game.tryMove( Infinity))
+            .addCommand(Controls.soft,     () => game.dropPiece(false))
+            .addCommand(Controls.hard,     () => game.dropPiece(true))
 
             .addCommand(Controls.ccw,  () => game.tryRotate(-1))
             .addCommand(Controls.cw,   () => game.tryRotate( 1))
@@ -70,19 +72,30 @@ export function initialize() {
             .addCommand(Controls.hold, () => game.tryHold())
             .execute(gMsg);
 
+        let cleaningUp = false;
+        async function quit(reason?: string) {
+            cleaningUp = true;
+            runningGames[msg.channel.id] = undefined;
+
+            game.lost = true;
+            game.loseReason = reason || "Gave up";
+            
+            clearInterval(gameLoop);
+            await emojiCommands.finish();
+            await gMsg.edit(constructEmbed(game));
+        }
+
         let gameLoop: NodeJS.Timeout;
         gameLoop = setInterval(async () => {
-            if (game.lost) return; // Must've quit
+            if (game.lost) {
+                if (cleaningUp) return; // Must've quit
+                return await quit(game.loseReason);
+            }
 
             for (let i = 0; i < 60; i++) {
                 game.tickEngine();
                 if (game.lost) {
-                    runningGames[msg.channel.id] = undefined;
-                    
-                    clearInterval(gameLoop);
-                    await emojiCommands.finish(); // Clear the controls away
-
-                    break;
+                    return await quit(game.loseReason);
                 }
             }
 
@@ -90,16 +103,8 @@ export function initialize() {
         }, 2000);
 
         runningGames[channel.id] = {
-            quit: async () => {
-                game.lost = true;
-                game.loseReason = "Gave up";
-                
-                clearInterval(gameLoop);
-                await emojiCommands.finish();
-                await gMsg.edit(constructEmbed(game));
-            },
             host: msg.author.id,
-            channel, game
+            channel, game, quit
         };
 
         loadingGames.delete(msg.channel.id);
@@ -119,7 +124,7 @@ export function initialize() {
 
         // Quit the game
         runningGames[msg.channel.id] = undefined;
-        game.quit();
+        await game.quit();
     });
 
     exchange.addCommand("restart", async msg => {
@@ -135,6 +140,6 @@ export function initialize() {
         // Quit the game
         runningGames[msg.channel.id] = undefined;
         await game.quit();
-        startNewGame(msg);
+        await startNewGame(msg);
     });
 }
