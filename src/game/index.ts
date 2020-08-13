@@ -240,7 +240,7 @@ export default class MinoGame {
             garbageToSend = Math.max(minimizedCombo, garbageToSend);
         }
 
-        return [score, garbageToSend];
+        return [score, Math.floor(garbageToSend)];
     }
 
     addGarbage() {
