@@ -9,7 +9,7 @@ export class GameOptions {
     rotateLock: number = 30
     translateLock: number = 30
 
-    lockTimer: number = 80
+    lockTimer: number = 120
 
     gravity: number = 0.016
 
