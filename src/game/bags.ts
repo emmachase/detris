@@ -12,7 +12,6 @@ export class SevenBag implements BagGenerator {
     private fillBag() {
         const pieces = Object.values(PieceType).filter(x => typeof x === "number");
         this.state = this.state.concat(shuffle(pieces));
-        // console.log(this.state);
     }
 
     getNextPiece(): PieceType {

@@ -156,8 +156,6 @@ export default class Board {
             }
         }
 
-        console.log("col", column);
-
         // Now fill in the bottom rows
         for (let row = 0; row < amount; row++) {
             if (!this.lines[row]) return; // Sanity check
