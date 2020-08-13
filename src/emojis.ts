@@ -1,9 +1,11 @@
 export const Squares = {
-    BG: "⬛",
-    G: "⬜",
+    background: "⬛", //\u2003\u2004 // \u3000\u205F\u200A
+    // worse \u3000\u2007\u2009\u200A
+    garbage: "⬜",
+    ghost: "▫️",
     I: "🟦",
     O: "🟨",
-    J: "<742946547095830609>",
+    J: "<:darkblue_square:742946547095830609>",
     L: "🟧",
     T: "🟪",
     S: "🟩",
@@ -13,6 +15,7 @@ export const Squares = {
 export const Controls = {
     left: "⬅️",
     right: "➡️",
+    soft: "⬇️",
     hard: "⏬",
     ccw: "↪️",
     cw: "↩️",

@@ -1,5 +1,6 @@
 import { Piece, PieceType, PieceData } from "./minos";
 import { GameOptions } from "./options";
+import Board from "./board";
 
 export class FallingMino {
     pieceData: Piece
@@ -12,11 +13,11 @@ export class FallingMino {
     remainingRotations: number
     remainingTranslations: number
 
-    constructor(options: GameOptions, piece: PieceType) {
-        this.pieceData = PieceData[options.rotationSystem][piece];
+    constructor(options: GameOptions, public pieceType: PieceType) {
+        this.pieceData = PieceData[options.rotationSystem][pieceType];
 
         const [width, height] = options.boardSize;
-        this.x = Math.floor(width  / 2) - 1;
+        this.x = Math.floor(width  / 2) - 1; //Math.floor(Math.random()*(width-4))+2;
         this.y = Math.floor(height / 2) - 3 + 0.01;
 
         this.remainingRotations = options.rotateLock;
@@ -33,16 +34,29 @@ export class FallingMino {
         }
     }
 
-    getCells(offsetX = 0, offsetY = 0, rot = this.rotation) {
+    getCellsExact(x: number, y: number, rot: number) {
         const cells = [];
         const [aox, aoy] = this.pieceData.cellOffset;
         for (let [cx, cy] of this.pieceData.cells) {
             [cx, cy] = this.cellRotate(cx, cy, rot);
 
-            cells.push([ aox + offsetX + cx + this.x
-                       , aoy + offsetY + cy + Math.ceil(this.y) ]);
+            cells.push([           aox + cx + x
+                       , Math.ceil(aoy + cy + y) ]);
         }
 
         return cells;
+    }
+
+    getCells(offsetX = 0, offsetY = 0, rot = this.rotation) {
+        return this.getCellsExact(offsetX + this.x, offsetY + this.y, rot);
+    }
+
+    getHardDropPosition(board: Board) {
+        let offset = 0;
+        while (!board.willPieceBeObstructed(this, 0, offset - 1)) {
+            offset--;
+        }
+
+        return [this.x, Math.ceil(this.y + offset), -offset];
     }
 }

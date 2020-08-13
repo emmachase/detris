@@ -6,7 +6,7 @@
   "author": "Emma",
   "license": "MIT",
   "scripts": {
-    "build": "rm -r build && tsc --build tsconfig.json",
+    "build": "rm -rf build && tsc --build tsconfig.json",
     "start": "yarn build && node build/index.js"
   },
   "dependencies": {

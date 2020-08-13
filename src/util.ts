@@ -15,3 +15,11 @@ export function shuffle(array: Array<any>) {
 
     return array;
 }
+
+export function normalMod(a: number, b: number) {
+    return ((a % b) + b) % b;
+}
+
+export function capitalize(str: string) {
+    return str.charAt(0).toLocaleUpperCase() + str.slice(1).toLocaleLowerCase();
+}

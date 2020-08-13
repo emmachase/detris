@@ -3,6 +3,7 @@ import { shuffle } from "../util";
 
 export interface BagGenerator {
     getNextPiece(): PieceType
+    peekPiece(n: number): PieceType
 }
 
 export class SevenBag implements BagGenerator {
@@ -20,5 +21,13 @@ export class SevenBag implements BagGenerator {
         }
 
         return this.state.shift();
+    }
+
+    peekPiece(n: number): PieceType {
+        while (this.state.length <= n) {
+            this.fillBag();
+        }
+
+        return this.state[n];
     }
 }

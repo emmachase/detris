@@ -1,7 +1,7 @@
 import { Squares } from "../emojis";
 
 export enum TileType {
-    Empty, Garbage,
+    Empty, Garbage, Ghost,
     I, O, T,
     L, J,
     S, Z
@@ -25,8 +25,9 @@ export enum RotationSystem {
 
 export const ColorScheme: Designated<Record<TileType, string>> = {
     SRS: {
-        [TileType.Empty]: Squares.BG,
-        [TileType.Garbage]: Squares.G,
+        [TileType.Empty]: Squares.background,
+        [TileType.Garbage]: Squares.garbage,
+        [TileType.Ghost]: Squares.ghost,
         [TileType.I]: Squares.I,
         [TileType.O]: Squares.O,
         [TileType.T]: Squares.T,

@@ -19,13 +19,26 @@ export default class Board {
         return true;
     }
 
-    constructor(private width: number, private height: number) {
+    constructor(public width: number, public height: number) {
         for (const row of range(this.height)) {
             this.lines[row] = [];
             for (const col of range(this.width)) {
                 this.lines[row][col] = TileType.Empty;
             }
         }
+
+        /*
+
+　   　   　   　   　   　   :orange_square:　   　   　   
+　   　   　   　   :orange_square::orange_square::orange_square:　   　   　   
+　   　   　   　   　   　   :orange_square:　   　   　   
+　   　   　   　   :orange_square::orange_square::orange_square:　   　   　   
+　   　   　   　   :purple_square:　   　   　   　   　   
+　   　   　   :purple_square::purple_square::purple_square:　   :red_square::red_square:　   
+　   　   　   :green_square::green_square:　   :darkblue_square:　   :red_square::red_square:
+　   　   :green_square::green_square:　   　   :darkblue_square::darkblue_square::darkblue_square:　  
+
+        */
     }
 
     toDiscord(options: GameOptions, piece?: FallingMino) {
@@ -44,20 +57,32 @@ export default class Board {
         }
 
         if (piece) {
+            const hdp = piece.getHardDropPosition(this);
+            const ghostPiece = new FallingMino(options, piece.pieceType);
+            ghostPiece.x = hdp[0]; ghostPiece.y = hdp[1]; 
+            ghostPiece.rotation = piece.rotation;
+            for (const [col, row] of ghostPiece.getCells()) {
+                textGrid[row][col] = ColorScheme[options.rotationSystem][TileType.Ghost];
+            }
+
             for (const [col, row] of piece.getCells()) {
-                // console.log(piece.pieceData.tile);
                 textGrid[row][col] = getStr(piece.pieceData.tile);
             }
         }
 
-        return textGrid.slice(0, 19).map(l => l.join("")).reverse().join("\n");
+        const fullBoard = textGrid.slice(0, 19).map(l => l.join("")).reverse().join("\n");
+        return `${fullBoard}`;
     }
 
-    addPiece(piece: FallingMino): number[] {
+    addPiece(piece: FallingMino, overrideTile?: TileType): number[] {
         const affectedRows = [];
         for (const [cx, cy] of piece.getCells()) {
-            // console.log(cy, cx);
-            this.lines[cy][cx] = piece.pieceData.tile;
+            if (overrideTile !== undefined) {
+                this.lines[cy][cx] = overrideTile;
+            } else {
+                this.lines[cy][cx] = piece.pieceData.tile;
+            }
+
             affectedRows.push(cy);
         }
 
@@ -66,10 +91,11 @@ export default class Board {
     }
 
     isTileOccupied(row: number, column: number) {
+        column = Math.floor(column); row = Math.floor(row);
         return this.lines[row]?.[column] !== TileType.Empty;
     }
 
-    willPieceBeObstructed(piece: FallingMino, offsetX = 0, offsetY = 0, rot = 0) {
+    willPieceBeObstructed(piece: FallingMino, offsetX = 0, offsetY = 0, rot = piece.rotation) {
         for (const cell of piece.getCells(offsetX, offsetY, rot)) {
             const [x, y] = cell;
             if (this.isTileOccupied(y, x)) {
@@ -108,5 +134,41 @@ export default class Board {
         for (let y = row; y < this.height; y++) {
             this.lines[y] = this.lines[y + 1] || this.genEmptyLine();
         }
+    }
+
+    clear() {
+        for (let y = 0; y < this.height; y++) {
+            this.lines[y] = this.genEmptyLine();
+        }
+    }
+    
+    addGarbageLines(column: number, amount: number) {
+        let survived = true;
+
+        // First shift the board up by amount
+        for (let row = this.height - 1; row >= 0; row--) {
+            if (this.lines[row + amount]) {
+                this.lines[row + amount] = this.lines[row];
+            } else {
+                if (!this.isLineEmpty(row)) {
+                    survived = false;
+                }
+            }
+        }
+
+        console.log("col", column);
+
+        // Now fill in the bottom rows
+        for (let row = 0; row < amount; row++) {
+            if (!this.lines[row]) return; // Sanity check
+            this.lines[row] = this.genEmptyLine();
+            for (let col = 0; col < this.width; col++) {
+                if (col !== column) {
+                    this.lines[row][col] = TileType.Garbage;
+                }
+            }
+        }
+
+        return true;
     }
 }
