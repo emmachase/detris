@@ -27,6 +27,8 @@ class Exchange {
     // Client handling
     private static commandRegex = /\S+/g;
     private handleMessage(msg: Discord.Message) {
+        console.debug("Checking message ", msg.content);
+        
         if (isUserMessage(msg)) {
             // Check if we have a prefix command for this message
             const cmdParts = msg.content.match(Exchange.commandRegex);
