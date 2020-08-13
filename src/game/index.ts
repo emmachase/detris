@@ -282,6 +282,8 @@ export default class MinoGame {
     }
 
     lockPiece(ignoreLockTimer: boolean = false) {
+        if (!this.fallingMino) return;
+
         if (!ignoreLockTimer && (this.fallingMino.lockTimer < this.options.lockTimer)) {
             this.fallingMino.lockTimer += 1;
             return;
@@ -371,6 +373,8 @@ export default class MinoGame {
     }
 
     tryMove(delta: number) {
+        if (!this.fallingMino) return;
+
         if (!this.board.willPieceBeObstructed(this.fallingMino, delta)) {
             this.fallingMino.x += delta;
 
@@ -385,6 +389,8 @@ export default class MinoGame {
     }
 
     dropPiece(hard: boolean) {
+        if (!this.fallingMino) return;
+
         const [px, py, score] = this.fallingMino.getHardDropPosition(this.board);
         if (Math.ceil(py) !== Math.ceil(this.fallingMino.y)) {
             this.lockWasSpin = false;
@@ -401,6 +407,7 @@ export default class MinoGame {
 
     tryHold() {
         if (this.holdLock) return;
+        if (!this.fallingMino) return;
 
         if (this.heldPiece !== undefined) {
             const pieceToSpawn = this.heldPiece;
