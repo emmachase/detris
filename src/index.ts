@@ -6,6 +6,5 @@ gameInterface.initialize();
 
 setInterval(() => {
     // Prevent them from being garbage collected hopefully
-    void client;
-    void exchange;
-}, 10000);
+    console.log("WHAT", client, exchange);
+}, 5000);
