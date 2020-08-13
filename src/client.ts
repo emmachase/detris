@@ -6,6 +6,11 @@ const discordClient = new Discord.Client();
 
 discordClient.on("ready", () => {
     console.log("Connected as " + discordClient.user.tag);
+    discordClient.user.setPresence({
+        activity: {
+           name: "type ^newgame to start" 
+        }
+    })
 });
 
 discordClient.login(token);
