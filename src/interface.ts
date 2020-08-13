@@ -77,6 +77,8 @@ export function initialize() {
             for (let i = 0; i < 60; i++) {
                 game.tickEngine();
                 if (game.lost) {
+                    runningGames[msg.channel.id] = undefined;
+                    
                     clearInterval(gameLoop);
                     await emojiCommands.finish(); // Clear the controls away
 
