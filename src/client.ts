@@ -20,6 +20,11 @@ discordClient.on("error", e => {
 	setTimeout(() => process.exit(1), 10000);
 })
 
+discordClient.on('disconnect', function(msg, code) {
+    console.error(msg);
+    discordClient.login(token);
+});
+
 setInterval(() => {
 	if (discordClient.user === null || discordClient.ws.status == 5) {
 		console.error("WATCHDOG: Discord User is not active, attempting restart...");
