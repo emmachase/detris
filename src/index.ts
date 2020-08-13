@@ -6,5 +6,8 @@ gameInterface.initialize();
 
 setInterval(() => {
     // Prevent them from being garbage collected hopefully
-    console.log("WHAT", client, exchange);
-}, 5000);
+    console.log("WHAT");
+    
+    const x = [client, exchange];
+    console.log(x.length, client.ws.status);
+}, 1000);
